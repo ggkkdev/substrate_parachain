@@ -21,6 +21,7 @@ log = { version = "0.4.17", default-features = false }
 scale-info = { version = "2.1.1", default-features = false, features = ["derive"] }
 serde = { version = "1.0.143", optional = true, features = ["derive"] }
 smallvec = "1.9.0"
+pallet-nicks = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.28" }
 
 # Local
 pallet-template = { path = "../pallets/template", default-features = false }
@@ -125,6 +126,9 @@ std = [
 	"xcm-builder/std",
 	"xcm-executor/std",
 	"xcm/std",
+	"pallet-aura/std",
+	"pallet-balances/std",
+	"pallet-nicks/std",
 ]
 
 runtime-benchmarks = [
@@ -147,4 +151,5 @@ runtime-benchmarks = [
 try-runtime = [
 	"frame-executive/try-runtime",
 	"frame-try-runtime",
+	"pallet-sudo/try-runtime",
 ]

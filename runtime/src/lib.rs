@@ -458,7 +458,10 @@ impl pallet_collator_selection::Config for Runtime {
 impl pallet_template::Config for Runtime {
 	type Event = Event;
 }
-
+impl pallet_sudo::Config for Runtime {
+	type Event = Event;
+	type Call = Call;
+}
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -466,6 +469,9 @@ construct_runtime!(
 		NodeBlock = opaque::Block,
 		UncheckedExtrinsic = UncheckedExtrinsic,
 	{
+		// Added in the top to avoid merge conflicts.
+		Sudo: pallet_sudo::{Pallet, Call, Storage, Event<T>, Config<T>} = 255,
+
 		// System support stuff.
 		System: frame_system::{Pallet, Call, Config, Storage, Event<T>} = 0,
 		ParachainSystem: cumulus_pallet_parachain_system::{

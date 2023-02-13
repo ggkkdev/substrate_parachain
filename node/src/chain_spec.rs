@@ -1,5 +1,5 @@
 use cumulus_primitives_core::ParaId;
-use parachain_template_runtime::{AccountId, AuraId, Signature, EXISTENTIAL_DEPOSIT};
+use parachain_template_runtime::{AccountId, AuraId, Signature, SudoConfig, EXISTENTIAL_DEPOSIT};
 use sc_chain_spec::{ChainSpecExtension, ChainSpecGroup};
 use sc_service::ChainType;
 use serde::{Deserialize, Serialize};
@@ -101,7 +101,8 @@ pub fn development_config() -> ChainSpec {
 					get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
 					get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
 				],
-				1000.into(),
+				get_account_id_from_seed::<sr25519::Public>("Alice"),
+				1001.into(),
 			)
 		},
 		Vec::new(),
@@ -111,7 +112,7 @@ pub fn development_config() -> ChainSpec {
 		None,
 		Extensions {
 			relay_chain: "rococo-local".into(), // You MUST set this to the correct network!
-			para_id: 1000,
+			para_id: 1001,
 		},
 	)
 }
@@ -142,6 +143,7 @@ pub fn local_testnet_config() -> ChainSpec {
 						get_collator_keys_from_seed("Bob"),
 					),
 				],
+				// Pre-funded accounts
 				vec![
 					get_account_id_from_seed::<sr25519::Public>("Alice"),
 					get_account_id_from_seed::<sr25519::Public>("Bob"),
@@ -156,7 +158,9 @@ pub fn local_testnet_config() -> ChainSpec {
 					get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
 					get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
 				],
-				1000.into(),
+				// Sudo account
+				get_account_id_from_seed::<sr25519::Public>("Alice"),
+				1001.into(),
 			)
 		},
 		// Bootnodes
@@ -172,7 +176,7 @@ pub fn local_testnet_config() -> ChainSpec {
 		// Extensions
 		Extensions {
 			relay_chain: "rococo-local".into(), // You MUST set this to the correct network!
-			para_id: 1000,
+			para_id: 1001,
 		},
 	)
 }
@@ -180,6 +184,7 @@ pub fn local_testnet_config() -> ChainSpec {
 fn testnet_genesis(
 	invulnerables: Vec<(AccountId, AuraId)>,
 	endowed_accounts: Vec<AccountId>,
+	root_key: AccountId,
 	id: ParaId,
 ) -> parachain_template_runtime::GenesisConfig {
 	parachain_template_runtime::GenesisConfig {
@@ -211,6 +216,10 @@ fn testnet_genesis(
 		},
 		// no need to pass anything to aura, in fact it will panic if we do. Session will take care
 		// of this.
+		sudo: SudoConfig {
+			// Assign network admin rights.
+			key: Some(root_key),
+		},
 		aura: Default::default(),
 		aura_ext: Default::default(),
 		parachain_system: Default::default(),
